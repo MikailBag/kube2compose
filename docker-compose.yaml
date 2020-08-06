@@ -1,0 +1,32 @@
+---
+version: "3.8"
+services:
+  apiserver:
+    image: "apiserver:latest"
+    environment:
+      MONGODB_CONNECTION_STRING: "mongodb://mongodb/jjs"
+  invoker:
+    image: "invoker:latest"
+    environment:
+      RUST_LOG: "info,invoker=trace,problem_loader=trace,puller=trace"
+      JJS_AUTH_DATA_INLINE: "{\"endpoint\": \"http://apiserver:1779/\", \"auth\": {\"byToken\": {\"token\": \"Dev::root\"}}}"
+  init-waiter:
+    image: "toolkit:latest"
+    entrypoint:
+      - /bin/bash
+      - /cmap/waiter
+  init-toolchains:
+    image: "toolkit:latest"
+    entrypoint:
+      - /bin/bash
+      - /cmap/init_toolchains
+  init-problems:
+    image: "toolkit:latest"
+    entrypoint:
+      - /bin/bash
+      - /cmap/init_problems
+  init-problems-upload:
+    image: "toolkit:latest"
+    entrypoint:
+      - /bin/bash
+      - /cmap/upload_problems
